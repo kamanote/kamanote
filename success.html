@@ -16,10 +16,13 @@
 
     const fetchAPI = (URL, options, onSuccessCallBack, onFailureCallBack) => {
         fetch(URL, options)
-        .then(r => { 
-            debugger
-            if(r) 
-                return r.json() })
+        .then(r => {
+            if([204].includes(r.status)){
+                return {}
+            }
+            else
+                return r.json() 
+            })
         .then(response => {
             console.log(response);
             
