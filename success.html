@@ -31,7 +31,7 @@
             if(response.display_name && response.email){
                 userName = response.display_name;
                 userEmail = response.email;
-                callZapierWebHook(access_token);
+                callZapierWebHook();
             }
             
             if(onSuccessCallBack)
@@ -69,7 +69,7 @@
     const callZapierWebHook = () => {
         let URL = "https://hooks.zapier.com/hooks/catch/9835119/ojdpvwf";
         let options = {
-            method: "GET",
+            method: "POST",
             cors: "cors",
             headers: {
             "Content-Type": "application/json",
