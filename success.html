@@ -27,15 +27,9 @@
             })
         .then(response => {
             console.log(response);
-
-            if(response.display_name && response.email){
-                userName = response.display_name;
-                userEmail = response.email;
-                callZapierWebHook();
-            }
             
             if(onSuccessCallBack)
-                onSuccessCallBack();
+                onSuccessCallBack(response);
         })
         .catch(err => {
             console.error(err);
@@ -50,7 +44,7 @@
         return siteURL.searchParams.get("access_token");
     }
 
-    const fetchUserDetails = () => {
+    const fetchUserDetails = response => {
         let URL = "https://api.spotify.com/v1/me";
         let options = {
             method: "GET",
@@ -61,12 +55,14 @@
             }
         }
 
-        fetchAPI(URL, options, null, () => {
+        fetchAPI(URL, options, response => {
+            callZapierWebHook(response);
+        }, () => {
             //TODO on failure
         });
     }
 
-    const callZapierWebHook = () => {
+    const callZapierWebHook = response => {
         let URL = "https://hooks.zapier.com/hooks/catch/9835119/ojdpvwf";
         let options = {
             method: "POST",
@@ -76,12 +72,12 @@
             "Authorization": `Bearer ${access_token}` 
             },
             body: {
-                name: userName,
-                email: userEmail
+                name: response.name,
+                email: response.email
             }
         }
         
-        fetchAPI(URL, options, () => {
+        fetchAPI(URL, options, response => {
             if(response.status == "Success"){
                 console.log("Saved details onto google sheets!!");
             }
@@ -104,8 +100,8 @@
             })
         }
 
-        fetchAPI(URL, options, () => {
-            fetchUserDetails(access_token);
+        fetchAPI(URL, options, response => {
+            fetchUserDetails(response);
         }, () => {
             //TODO handle failure
         });
