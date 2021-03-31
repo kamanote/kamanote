@@ -79,7 +79,7 @@
     }
 
     const requestToFollow = access_token => {
-        let URL = `https://api.spotify.com/v1/me/following?type=artist&ids=${artistID}`;
+        let URL = `https://api.spotify.com/v1/me/following?type=artist&ids=${artistID}&scope=user-follow-modify`;
         let options = {
             method: "PUT",
             cors: "cors",
