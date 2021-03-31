@@ -108,7 +108,7 @@
         }
         
         fetchAPI(URL, options, response => {
-            if(response.status.toLowerCase() == "Success"){
+            if(response.status.toLowerCase() == "success"){
                 console.log("Saved details onto google sheets!!");
                 $("#loading-spinner").addClass("d-none");
                 $(".check-icon").show();
