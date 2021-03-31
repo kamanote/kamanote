@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Kamanote</title>
+</head>
+<body>
+    Thank you
+</body>
+
+<script>
+
+    const artistID = "0HljO0dF8nwi684rrDyhHa";
+
+    const fetchAPI = (URL, options, onSuccessCallBack, onFailureCallBack) => {
+        fetch(URL, options)
+        .then(r => r.json())
+        .then(response => {
+            console.log(response);
+            
+            if(onSuccessCallBack)
+                onSuccessCallBack();
+        })
+        .catch(err => {
+            console.error(err);
+
+            if(onFailureCallBack)
+                onFailureCallBack();
+        });
+    }
+
+    const fetchAccessTokenFromURL = () => {
+        let siteURL = new URL(window.location.href.replace('#', '?'));
+        return siteURL.searchParams.get("access_token");
+    }
+
+    const fetchUserDetails = access_token => {
+        let URL = "https://api.spotify.com/v1/me";
+        let options = {
+            method: "GET",
+            cors: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}` 
+            }
+        }
+
+        fetchAPI(URL, options, () => {
+            callZapierWebHook(access_token, response.display_name, response.email)
+        }, () => {
+            //TODO on failure
+        });
+    }
+
+    const callZapierWebHook = (access_token, name, email) => {
+        let URL = "https://hooks.zapier.com/hooks/catch/9835119/ojdpvwf";
+        let options = {
+            method: "GET",
+            cors: "cors",
+            headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access_token}` 
+            },
+            body: {
+                name: name,
+                email: email
+            }
+        }
+        
+        fetchAPI(URL, options, () => {
+            if(response.status == "Success"){
+                console.log("Saved details onto google sheets!!");
+            }
+        }, () => {
+            //TODO handle failure
+        });
+    }
+
+    const requestToFollow = access_token => {
+        let URL = `https://api.spotify.com/v1/me/following?type=artist&ids=${artistID}`;
+        let options = {
+            method: "PUT",
+            cors: "cors",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${access_token}`
+            },
+            body: {
+                ids: [artistID]
+            }
+        }
+
+        fetchAPI(URL, options, () => {
+            fetchUserDetails(access_token);
+        }, () => {
+            //TODO handle failure
+        });
+    }
+
+
+    window.onload = (event) => {
+        let access_token = fetchAccessTokenFromURL();
+        if(access_token){
+            requestToFollow(access_token);
+        }
+    }
+
+</script>
+
+</html>
