@@ -71,10 +71,10 @@
             "Content-Type": "application/json",
             "Authorization": `Bearer ${access_token}` 
             },
-            body: {
+            body: JSON.stringify({
                 name: response.display_name,
                 email: response.email
-            }
+            })
         }
         
         fetchAPI(URL, options, response => {
