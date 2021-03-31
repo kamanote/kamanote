@@ -14,7 +14,7 @@
 
     const artistID = "0HljO0dF8nwi684rrDyhHa";
 
-    var userName, userEmail;
+    var userName, userEmail, access_token;
 
     const fetchAPI = (URL, options, onSuccessCallBack, onFailureCallBack) => {
         fetch(URL, options)
@@ -50,7 +50,7 @@
         return siteURL.searchParams.get("access_token");
     }
 
-    const fetchUserDetails = access_token => {
+    const fetchUserDetails = () => {
         let URL = "https://api.spotify.com/v1/me";
         let options = {
             method: "GET",
@@ -66,7 +66,7 @@
         });
     }
 
-    const callZapierWebHook = (access_token) => {
+    const callZapierWebHook = () => {
         let URL = "https://hooks.zapier.com/hooks/catch/9835119/ojdpvwf";
         let options = {
             method: "GET",
@@ -90,7 +90,7 @@
         });
     }
 
-    const requestToFollow = access_token => {
+    const requestToFollow = () => {
         let URL = `https://api.spotify.com/v1/me/following?type=artist&ids=${artistID}&scope=user-follow-modify`;
         let options = {
             method: "PUT",
@@ -113,9 +113,10 @@
 
 
     window.onload = (event) => {
-        let access_token = fetchAccessTokenFromURL();
-        if(access_token){
-            requestToFollow(access_token);
+        let token = fetchAccessTokenFromURL();
+        if(token){
+            access_token = token;
+            requestToFollow();
         }
     }
 
