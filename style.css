@@ -85,7 +85,7 @@ body{
     background-color: #1db954;
     width: 50%;
     min-height: 5vh;
-    outline: none;
+    outline: none !important;
     border: none;
     border-radius: 5vw;
     position: absolute;
